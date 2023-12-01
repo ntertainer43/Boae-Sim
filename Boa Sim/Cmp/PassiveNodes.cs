@@ -7,10 +7,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Boa_Sim.Nodes
+namespace Boa_Sim.Cmp
 {
-    internal abstract class Nodes
+    public class Nodes
     {
+        public static int GlobalId { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
         public string BitVale { get; set; }
@@ -18,7 +19,7 @@ namespace Boa_Sim.Nodes
         public int maxInput = 1;
         public Point anchorPoint {get; set; }  
        
-
+        
        // public virtual Port[] Connections { get; set; }
         public  Port[] Connections
         {
@@ -64,7 +65,7 @@ namespace Boa_Sim.Nodes
             foreach (Port p in conList)
             {
 
-                if (p.inout == IO.OUTPUT)
+                if (p.inout == IO.INPUT)
                 {
                     count++;
                     if (count > maxInput)
@@ -83,16 +84,19 @@ namespace Boa_Sim.Nodes
     }
 
 
-    class WireNode: Nodes
+    public class WireNode: Nodes
     {
         public PassiveNodeType NodeType = PassiveNodeType.WIRE;
         
         
  
 
-        WireNode(int ID, string Name)
+        public WireNode()
         {
-            
+            Nodes.GlobalId++;
+            this.Id = Nodes.GlobalId;
+            this.Name = "Constant" + Nodes.GlobalId;
+            this.errorList = new string[0] { };
         }
 
         public void Action()
@@ -113,18 +117,20 @@ namespace Boa_Sim.Nodes
     }
 
 
-    class Constant : Nodes
+    public class Constant : Nodes
     {
 
 
 
         public PassiveNodeType NodeType = PassiveNodeType.CONSTANT;
-        Constant(int Id, string Name)
+        Constant()
         {
-            this.Name = Name;
-            this.Id = Id;
+            Nodes.GlobalId++;
+            this.Id = Nodes.GlobalId;
+            this.Name = "Constant" + Nodes.GlobalId;
             this.maxInput = 0;
-            
+            this.errorList = new string[0] { };
+
         }
         public void Action()
         {
@@ -135,13 +141,15 @@ namespace Boa_Sim.Nodes
     }
 
 
-    class Probe: Nodes
+    public class Probe: Nodes
     {
         public PassiveNodeType NodeType = PassiveNodeType.PROBE;
         Probe(int Id, string Name)
         {
-            this.Id = Id;
-            this.Name = Name;
+            Nodes.GlobalId++;
+            this.Id = Nodes.GlobalId;
+            this.Name = "Constant" + Nodes.GlobalId;
+            this.errorList = new string[0] { };
 
         }
 
@@ -154,7 +162,7 @@ namespace Boa_Sim.Nodes
 
 
 
-    class Splitter: Nodes
+    public class Splitter: Nodes
     {
         public PassiveNodeType NodeType = PassiveNodeType.SPLITTER;
         public List<WireNode> SplitterOut { get; set; }
@@ -162,8 +170,9 @@ namespace Boa_Sim.Nodes
 
         Splitter(int id, string Name)
         {
-            this.Id = Id;
+            this.Id = id;
             this.Name = Name;
+            this.errorList = new string[0] { };
         }
 
     }

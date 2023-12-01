@@ -9,4 +9,12 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="andgate.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="andgate.png" />
+  </ItemGroup>
+
 </Project>

@@ -2,21 +2,23 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Boa_Sim.Nodes
+namespace Boa_Sim.Cmp
 {
 
-    enum ActiveNodeType
+    public enum ActiveNodeType
     {
-        ANDGATE, ORGATE, COMPERATOR, ADDER, MULTPLIER, DIV, MUX, DEMUX, DECODE,
-        REGISTER, FLIPFLOP, NOTGATE, NORGATE, NANDGATE, XORGATE, BUFFER, NULL
+        ANDREDUCE, ORREDUCE, COMPERATOR, ADDER, MULTPLIER, DIV, MUX, DEMUX, DECODE,
+        REGISTER, FLIPFLOP, NOTGATE, NORREDUCE, NANDREDUCE, XORREDUCE, BUFFER, NULL, BITSELECTOR,
+        SHIFTER,SHIFTREGISTER,BITWISEAND, BITWISEOR, BITWISEXOR,BITWISENAND, BITWISENOR
     }
 
     public enum PassiveNodeType
     {
-        WIRE, PROBE, CONSTANT, SPLITTER,NULL
+        WIRE, PROBE, CONSTANT, SPLITTER, NULL, PIN
     }
 
     public enum IO
@@ -24,19 +26,20 @@ namespace Boa_Sim.Nodes
         INPUT, OUTPUT
     }
 
-     struct Port
+     public struct Port
     {
+        public int portId;
         public int Buswidth;
         public int ConnectionID;
         public IO inout;
         public string BitValue;
-        
+        public bool isActiveNode;
       
     }
 
 
 
-    internal abstract class ActiveNodes: Nodes
+    public class ActiveNodes: Nodes
     {
         public virtual Port[] InputPorts { get; set; }
         public virtual Port[] OutputPorts{ get; set;}
@@ -44,9 +47,9 @@ namespace Boa_Sim.Nodes
     }
 
 
-    class AndGate : ActiveNodes
+    public class AndGate : ActiveNodes
     {
-        public ActiveNodeType Nodetype = ActiveNodeType.ANDGATE;
+        public ActiveNodeType Nodetype = ActiveNodeType.ANDREDUCE;
         public override Port[] InputPorts
         {
             get
@@ -63,17 +66,21 @@ namespace Boa_Sim.Nodes
 
             }
         }
+        bool bitwise;
 
 
+ 
 
-
-        public AndGate(int Id = 1, string Name = "AndGate1")
+        public AndGate(bool bitwise = false)
         {
-            this.Id = Id;
+            
+            Nodes.GlobalId++;
+            this.Id = Nodes.GlobalId;
             this.Name = Name;
-            this.InputPorts = [new Port() { Buswidth = 1, ConnectionID = 0},
-                                new Port() { Buswidth = 1, ConnectionID = 0}  ];
-            this.OutputPorts = [new Port() { Buswidth = 1, ConnectionID = 0 }];
+            //this.InputPorts = [new Port() { Buswidth = 1, ConnectionID = 0 },
+            //    new Port() { Buswidth = 1, ConnectionID = 0 }];
+            //this.OutputPorts = [new Port() { Buswidth = 1, ConnectionID = 0 }];
+            this.bitwise = bitwise;
            
             
         }

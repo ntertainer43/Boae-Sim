@@ -7,8 +7,12 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid x:Name="newCV">
-        <Canvas/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="619,51,0,0" VerticalAlignment="Top" Width="61" Click="drawLine"/>
+        <Canvas x:Name="mycv" Margin="25,0,-25,0" MouseMove="canvasmove" MouseUp="wirestop">
+            <Button x:Name="andgatebtn" Content="AndGate" Canvas.Left="23" Canvas.Top="302" Click="createandgate"/>
+            <Image x:Name="andgateicon" Height="193" Canvas.Top="104" Width="225" Source="/andgate.png" MouseMove="poscapture" Canvas.Left="195" RenderTransformOrigin="0.517,0.531" MouseDown="mclick" MouseUp="wirestop"/>
+            <Label x:Name="mouselabel" Content="POs:" Canvas.Left="247" Canvas.Top="387" HorizontalAlignment="Left" VerticalAlignment="Top" Width="273"/>
+        </Canvas>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="570,121,0,0" VerticalAlignment="Top" Width="61" />
 
     </Grid>
 </Window>
