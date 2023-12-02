@@ -5,14 +5,69 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Boa_Sim"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid x:Name="newCV">
-        <Canvas x:Name="mycv" Margin="25,0,-25,0" MouseMove="canvasmove" MouseUp="wirestop">
-            <Button x:Name="andgatebtn" Content="AndGate" Canvas.Left="23" Canvas.Top="302" Click="createandgate"/>
-            <Image x:Name="andgateicon" Height="193" Canvas.Top="104" Width="225" Source="/andgate.png" MouseMove="poscapture" Canvas.Left="195" RenderTransformOrigin="0.517,0.531" MouseDown="mclick" MouseUp="wirestop"/>
-            <Label x:Name="mouselabel" Content="POs:" Canvas.Left="247" Canvas.Top="387" HorizontalAlignment="Left" VerticalAlignment="Top" Width="273"/>
-        </Canvas>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="570,121,0,0" VerticalAlignment="Top" Width="61" />
+        Title="MainWindow" Height="550" Width="800">
+    <Grid HorizontalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="51*"/>
+            <ColumnDefinition Width="749*"/>
+        </Grid.ColumnDefinitions>
+
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height=" 10"/>
+
+            <RowDefinition Height="165*"/>
+
+            <RowDefinition Height="70"/>
+        </Grid.RowDefinitions>
+
+
+
+        <Grid Grid.Row="1" Grid.RowSpan="3" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=" 100"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="10">
+
+                </ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="200"/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Button x:Name="probebtn" Content="Probe" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Margin="10,13,0,0"/>
+                <Button x:Name="andbtn" Content="And" HorizontalAlignment="Left" Margin="10,38,0,0" Grid.Row="1" VerticalAlignment="Top" Click="createnode"/>
+                <Button x:Name="wirebtn" Content="Wire" HorizontalAlignment="Left" Margin="10,63,0,0" Grid.Row="1" VerticalAlignment="Top" Click="wireactive"/>
+
+
+
+            </Grid>
+            <Canvas x:Name="sceneCanv" Grid.Column="1" MouseMove="positionelement" MouseDown="scenemousedown" Margin="0,0,0,104">
+                <Rectangle Height="442" Canvas.Left="10" Stroke="Black" Width="793" Fill="White"/>
+
+            </Canvas>
+
+
+
+
+
+        </Grid>
+        <Grid Grid.Row="2"  Grid.RowSpan="2" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Label Content="Console Log:" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Column="0" VerticalAlignment="Center" RenderTransformOrigin="-0.4,0.6" Width="84" MouseDown="consolemouse"/>
+            <Border BorderBrush="Black" BorderThickness="2" Grid.Column="1">
+                <TextBox x:Name="Consoletb" VerticalScrollBarVisibility="Visible" 
+                         AcceptsReturn="True" TextWrapping="Wrap" MouseDown="consolemouse"></TextBox>
+            </Border>
+        </Grid>
+
+
 
     </Grid>
+
+
 </Window>

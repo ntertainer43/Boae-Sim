@@ -50,22 +50,22 @@ namespace Boa_Sim.Cmp
     public class AndGate : ActiveNodes
     {
         public ActiveNodeType Nodetype = ActiveNodeType.ANDREDUCE;
-        public override Port[] InputPorts
-        {
-            get
-            {
-                return InputPorts;
-            }
-            set
-            {
-                if (!InputEqual(InputPorts))
-                {
-                    this.errorList.Append("Input Ports Mismatch");
-                }
-                InputPorts = InputPorts;
+        public override Port[] InputPorts { get; set; }
+        //{
+        //    get
+        //    {
+        //        return InputPorts;
+        //    }
+        //    set
+        //    {
+        //        if (!InputEqual(InputPorts))
+        //        {
+        //            this.errorList.Append("Input Ports Mismatch");
+        //        }
+        //        InputPorts = InputPorts;
 
-            }
-        }
+        //    }
+        //}
         bool bitwise;
 
 
@@ -77,6 +77,8 @@ namespace Boa_Sim.Cmp
             Nodes.GlobalId++;
             this.Id = Nodes.GlobalId;
             this.Name = Name;
+            this.InputPorts = [new Port(), new Port()];
+            this.OutputPorts = [new Port()];
             //this.InputPorts = [new Port() { Buswidth = 1, ConnectionID = 0 },
             //    new Port() { Buswidth = 1, ConnectionID = 0 }];
             //this.OutputPorts = [new Port() { Buswidth = 1, ConnectionID = 0 }];

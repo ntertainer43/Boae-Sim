@@ -17,4 +17,8 @@
     <Resource Include="andgate.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Simulator\" />
+  </ItemGroup>
+
 </Project>
