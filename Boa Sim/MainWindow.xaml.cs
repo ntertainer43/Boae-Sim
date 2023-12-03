@@ -17,39 +17,23 @@ namespace Boa_Sim
 
 
 
-    public enum LineType
-    {
-        VERTICAL, HORIZONTAL, POINTLINE
-    }
-    public struct WireHelper
-    {
-        public Line line1;
-        public Line line2;
-        public LineType linetype { get; set; }
- 
-        public WireHelper(Line line1, Line line2, LineType ltype) 
-        { 
-            this.line1 = line1;
-            this.line2 = line2; 
-            this.linetype = ltype; 
-        }
-        
-    }
+
 
 
     public partial class MainWindow : Window
     {
         NodeManager currentManager { get; set; }
-        bool drawwire { get; set; }
+        bool drawWire { get; set; }
         bool drawing { get;set; }
-        bool incompletewire { get; set; }   
+        bool drawNode { get; set; }
         Point startPoint { get; set; }
         Line currentLine { get; set; }
         WireHelper tempwires { get; set; }
+        NodeHelper tempnodes { get; set; }
         Point wireCorner { get; set; }
 
         ActiveNodeType pressedNode { get; set; }
-        bool nodeactive { get; set; }
+        
 
         public MainWindow()
         {
@@ -57,6 +41,7 @@ namespace Boa_Sim
             //newANd.InputPorts = inputs;
             this.currentManager = new NodeManager();
             this.tempwires = new WireHelper();
+            this.tempnodes = new NodeHelper();
             this.drawing = false;
 
             InitializeComponent();
@@ -64,7 +49,7 @@ namespace Boa_Sim
 
         private void wireactive(object sender, RoutedEventArgs e)
         {
-            this.drawwire = true;
+            this.drawWire = true;
             Consoletb.Text += "Drawing Wire \n";
             //Window1 newwind = new Window1();    
             //newwind.Show();
@@ -90,18 +75,27 @@ namespace Boa_Sim
         {
             if (this.drawing)
             {
-                this.incompletewire = false;
-                this.drawwire = false;
+                this.drawNode = false;
+                this.drawWire = false;
                 this.drawing = false;
+
+                //also create the required eventhandling for the controls drawn while placing them or maybe before
+
+
+
+
+                this.tempwires = new WireHelper();
+                this.tempnodes = new NodeHelper();
             }
      
-            if (this.drawwire)
+            if (this.drawWire || this.drawNode)
             {
                 this.drawing = true;
                 //Control newctr = sender as Control;
-                this.startPoint = new Point(e.GetPosition(sceneCanv).X, e.GetPosition(sceneCanv).Y +10);
+                this.startPoint = new Point(e.GetPosition(sceneCanv).X, e.GetPosition(sceneCanv).Y);
                 Consoletb.Text += "Line position is " + this.startPoint.X + " " + this.startPoint.Y + "\n"; 
             }
+
             
         }
 
@@ -114,190 +108,37 @@ namespace Boa_Sim
 
         private void positionelement(object sender, MouseEventArgs e)
         {
-            Path drawbody = new Path();
-            List<Path> inputport = new List<Path>();
-            List<Path> outputport = new List<Path>();
 
-            if (this.nodeactive)
-            {
-                switch (this.pressedNode)
-                {
-                    case ActiveNodeType.ANDREDUCE:
-                        AndUI drawAnd = new AndUI(e.GetPosition(sceneCanv));
-                        drawbody = drawAnd.body;
-                        Consoletb.Text = Convert.ToString( drawbody.Stroke);
-                        inputport = drawAnd.Inpoints;
-                        outputport = drawAnd.Outpoints;
-                        int a = 0;
 
-                        break;
-                    case ActiveNodeType.ORREDUCE:
-                        break;
-                    case ActiveNodeType.COMPERATOR:
-                        break;
-                    case ActiveNodeType.ADDER:
-                        break;
-                    case ActiveNodeType.MULTPLIER:
-                        break;
-                    case ActiveNodeType.DIV:
-                        break;
-                    case ActiveNodeType.MUX:
-                        break;
-                    case ActiveNodeType.DEMUX:
-                        break;
-                    case ActiveNodeType.DECODE:
-                        break;
-                    case ActiveNodeType.REGISTER:
-                        break;
-                    case ActiveNodeType.FLIPFLOP:
-                        break;
-                    case ActiveNodeType.NOTGATE:
-                        break;
-                    case ActiveNodeType.NORREDUCE:
-                        break;
-                    case ActiveNodeType.NANDREDUCE:
-                        break;
-                    case ActiveNodeType.XORREDUCE:
-                        break;
-                    case ActiveNodeType.BUFFER:
-                        break;
-                    case ActiveNodeType.NULL:
-                        break;
-                    case ActiveNodeType.BITSELECTOR:
-                        break;
-                    case ActiveNodeType.SHIFTER:
-                        break;
-                    case ActiveNodeType.SHIFTREGISTER:
-                        break;
-                    case ActiveNodeType.BITWISEAND:
-                        break;
-                    case ActiveNodeType.BITWISEOR:
-                        break;
-                    case ActiveNodeType.BITWISEXOR:
-                        break;
-                    case ActiveNodeType.BITWISENAND:
-                        break;
-                    case ActiveNodeType.BITWISENOR:
-                        break;
-                    default:
-                        break;
-                }
-
-                sceneCanv.Children.Add(drawbody);
-                foreach (Path inpath in inputport)
-                {
-                    sceneCanv.Children.Add(inpath);
-                }
-                foreach (Path outpath in outputport)
-                {
-                    sceneCanv.Children.Add(outpath);
-                }
-
-            }
-
+          
 
 
             //positioning for wire
             if (this.drawing == true)
             {
-               
-                sceneCanv.Children.Remove(this.tempwires.line1);
-                sceneCanv.Children.Remove(this.tempwires.line2);
-                
-                //Control newctr = sender as Control;
 
+                if (this.drawNode)
+                { 
 
-                Line wireline1 = new Line();
-                Line wireline2 = new Line();
-
-
-                //drawing orthogonal lines parameters
-                double tempx = Math.Abs( this.startPoint.X - e.GetPosition(sceneCanv).X);
-                double tempy = Math.Abs( this.startPoint.Y - e.GetPosition(sceneCanv).Y);
-
-                wireline1.X1 = this.startPoint.X;
-                wireline1.Y1 = this.startPoint.Y;
-
-                if(tempx <30 && tempy < 30)
-                {
-                                            
-                        wireline1.X2 = wireline1.X1;
-                        wireline1.Y2 = e.GetPosition(sceneCanv).Y;
-                        wireline2.X2 = e.GetPosition(sceneCanv).X;
-                        wireline2.Y2 = wireline1.Y2;
-                        wireline2.X1 = wireline1.X2;
-                        wireline2.Y1 = wireline1.Y2;
-                        this.tempwires = new WireHelper(wireline1, wireline2, LineType.POINTLINE);
-                   
-                }
-                else if (tempx> tempy && tempx > 30)
-                {
-                    switch (this.tempwires.linetype)
-                    {
- 
-                        case LineType.VERTICAL:
-                            wireline1.X2 = wireline1.X1;
-                            wireline1.Y2 = e.GetPosition(sceneCanv).Y;
-                            wireline2.X2 = e.GetPosition(sceneCanv).X;
-                            wireline2.Y2 = wireline1.Y2;
-                            wireline2.X1 = wireline1.X2;
-                            wireline2.Y1 = wireline1.Y2;
-                            this.tempwires = new WireHelper(wireline1, wireline2, LineType.VERTICAL);
-
-                            break;
-                        default:
-                            wireline1.X2 = e.GetPosition(sceneCanv).X;
-                            wireline1.Y2 = wireline1.Y1;
-                            wireline2.X2 = wireline1.X2;
-                            wireline2.Y2 = e.GetPosition(sceneCanv).Y;
-                            wireline2.X1 = wireline1.X2;
-                            wireline2.Y1 = wireline1.Y2;
-                            this.tempwires = new WireHelper(wireline1, wireline2, LineType.HORIZONTAL);
-                            break;
-                            
-                    }
-                }
-                else
-                {
-                    switch (this.tempwires.linetype)
-                    {
-                   
-                        case LineType.HORIZONTAL:
-                            wireline1.X2 = e.GetPosition(sceneCanv).X;
-                            wireline1.Y2 = wireline1.Y1;
-                            wireline2.X2 = wireline1.X2;
-                            wireline2.Y2 = e.GetPosition(sceneCanv).Y;
-                            wireline2.X1 = wireline1.X2;
-                            wireline2.Y1 = wireline1.Y2;
-                            this.tempwires = new WireHelper(wireline1, wireline2, LineType.HORIZONTAL);
-                            break;
-
-                        default:
-                            wireline1.X2 = wireline1.X1;
-                            wireline1.Y2 = e.GetPosition(sceneCanv).Y;
-                            wireline2.X2 = e.GetPosition(sceneCanv).X;
-                            wireline2.Y2 = wireline1.Y2;
-                            wireline2.X1 = wireline1.X2;
-                            wireline2.Y1 = wireline1.Y2;
-                            this.tempwires = new WireHelper(wireline1, wireline2, LineType.VERTICAL);
-
-                            break;
-                    }
+                    NodeUI scenenode = new NodeUI(this.pressedNode);
+                    this.tempnodes = scenenode.DrawNode(sceneCanv, this.tempnodes, this.startPoint, e);
+                    
 
                 }
+
+
+
+
+
+                if (this.drawWire)
+                {
+                    // this creates orthogonal wires until middle mousebutton is pressed.
+                    WireUI scenewire = new WireUI();
+                    this.tempwires = scenewire.drawWire(sceneCanv, this.tempwires, this.startPoint, e);
+                }
+                
                 
 
-                wireline1.Stroke = Brushes.Black;
-                wireline1.StrokeThickness = 2;
-                wireline2.Stroke = Brushes.Black;
-                wireline2.StrokeThickness = 2;
-
-                this.currentLine = wireline1;
-                //this.tempwires = new WireHelper(wireline1, wireline2, LineType.HORIZONTAL);
-                
-                sceneCanv.Children.Add(wireline1);
-                sceneCanv.Children.Add(wireline2);
-               // this.incompletewire = true;
             }
         }
 
@@ -316,7 +157,7 @@ namespace Boa_Sim
             //newpath.Data = recgeo;
             //sceneCanv.Children.Add(newpath);
             
-            this.nodeactive = true;
+            this.drawNode = true;
             this.pressedNode = ActiveNodeType.ANDREDUCE;
             
 

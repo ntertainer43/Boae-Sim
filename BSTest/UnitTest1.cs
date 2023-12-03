@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 using Boa_Sim.Cmp;
-using System.Drawing;
+using System.Windows;
 
 namespace BSTest
 {
