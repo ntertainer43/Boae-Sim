@@ -135,9 +135,16 @@ namespace Boa_Sim.VisualNode
             return tempnode;
         }
 
-        public void ConnectWire()
+        public void ConnectWire(WireNode wireconnect, Port connectionPort)
         {
+            Port tempport = new Port();
+            if (connectionPort.inout == IO.INPUT)
+            {
+                tempport.BitValue = wireconnect.BitVale;
+                tempport.ConnectionID = wireconnect.Id;
 
+
+            }
         }
 
 
