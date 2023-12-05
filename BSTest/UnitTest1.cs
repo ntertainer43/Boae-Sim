@@ -26,18 +26,6 @@ namespace BSTest
         }
 
 
-        [Test]
-        public void Test2()
-        {
-            Boa_Sim.Cmp.NodeManager nodeManager = new Boa_Sim.Cmp.NodeManager();
-            nodeManager.CreatePassiveNode(PassiveNodeType.WIRE, new Point(4, 5));
-            nodeManager.CreateActiveNode(ActiveNodeType.ANDREDUCE, new Point(80, 50));
 
-            OperationValue opval = new OperationValue();
-            opval.newName = "Hello AndGate";
-            nodeManager.Update(1, "PASSIVE", NodeOperations.NAME, opval);
-            int a = 10;
-            Assert.Pass();
-        }
     }
 }

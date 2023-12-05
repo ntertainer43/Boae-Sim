@@ -22,7 +22,7 @@ namespace Boa_Sim
 
     public partial class MainWindow : Window
     {
-        NodeManager currentManager { get; set; }
+        
         bool drawWire { get; set; }
         bool drawing { get;set; }
         bool drawNode { get; set; }
@@ -32,17 +32,22 @@ namespace Boa_Sim
         NodeHelper tempnodes { get; set; }
         Point wireCorner { get; set; }
 
-        ActiveNodeType pressedNode { get; set; }
-        
+        NodeType pressedNode { get; set; }
+        NodeUI sceneNode { get; set; }
+        WireUI sceneWire { get; set; }
+        List<NodeUI> scenenodes { get; set; }
+        List<WireUI> scenewires { get; set; }
 
         public MainWindow()
         {
 
             //newANd.InputPorts = inputs;
-            this.currentManager = new NodeManager();
+           // this.currentManager = new NodeManager();
             this.tempwires = new WireHelper();
             this.tempnodes = new NodeHelper();
             this.drawing = false;
+            this.scenenodes = new List<NodeUI>();
+            this.scenewires = new List<WireUI>();
 
             InitializeComponent();
         }
@@ -57,12 +62,7 @@ namespace Boa_Sim
         }
 
       
-        
-
-        private void mousecapture(object sender, MouseEventArgs e)
-        {
-            Consoletb.Text += "ENter the canvas \n";
-        }
+       
 
         private void wirecomplete(object sender, MouseButtonEventArgs e)
         {
@@ -79,15 +79,31 @@ namespace Boa_Sim
                 this.drawWire = false;
                 this.drawing = false;
 
+
                 //also create the required eventhandling for the controls drawn while placing them or maybe before
 
 
+                //instansiating new tempnodes to prevent deleting of previous ones.
+                if (this.drawWire)
+                {
+                    this.sceneWire.sceneListIndex = this.scenewires.Count + 1;
+                    this.scenewires.Add(this.sceneWire);
+                }
+                if (this.drawNode)
+                {
+                    this.sceneNode.sceneListIndex = this.scenenodes.Count + 1;
+                    this.scenenodes.Add(this.sceneNode);
+                }
 
 
+                
+                
+
+                //if performace to be gained replace it with scenenodes and scenewire wirehelper and nodehelper
                 this.tempwires = new WireHelper();
                 this.tempnodes = new NodeHelper();
             }
-     
+
             if (this.drawWire || this.drawNode)
             {
                 this.drawing = true;
@@ -100,44 +116,41 @@ namespace Boa_Sim
         }
 
 
-
-        private void consolemouse(object sender, MouseButtonEventArgs e)
-        {
-            Consoletb.Text = "Clicking in console";
-        }
-
         private void positionelement(object sender, MouseEventArgs e)
         {
-
-
-          
-
-
+            
             //positioning for wire
             if (this.drawing == true)
             {
-
-                if (this.drawNode)
+                Consoletb.Text += "Now Drawing Wire from Port";
+                if (this.drawNode == true)
                 { 
-
-                    NodeUI scenenode = new NodeUI(this.pressedNode);
-                    this.tempnodes = scenenode.DrawNode(sceneCanv, this.tempnodes, this.startPoint, e);
+                    this.sceneNode = new NodeUI(this.pressedNode);
+                    this.tempnodes = this.sceneNode.DrawNode(sceneCanv, this.tempnodes, this.startPoint, e);
+                    foreach (Path iport in this.sceneNode.helper.InPorts)
+                    {
+                        iport.MouseDown += clickonPort;
+                    }
+                    foreach (Path iport in this.sceneNode.helper.OutPorts)
+                    {
+                        iport.MouseDown += clickonPort;
+                    }
+                    this.sceneNode.helper.body.MouseDown += scenemousedown;
+                    
                     
 
                 }
 
-
-
-
-
-                if (this.drawWire)
+                if (this.drawWire == true)
                 {
                     // this creates orthogonal wires until middle mousebutton is pressed.
-                    WireUI scenewire = new WireUI();
-                    this.tempwires = scenewire.drawWire(sceneCanv, this.tempwires, this.startPoint, e);
+                    this.sceneWire = new WireUI();
+
+
+                    this.tempwires = this.sceneWire.drawWire(sceneCanv, this.tempwires, this.startPoint, e);
+                    this.sceneWire.helpers[this.sceneWire.helpers.Count -1].line1.MouseDown += scenemousedown;
+                    this.sceneWire.helpers[this.sceneWire.helpers.Count -1].line2.MouseDown += scenemousedown;
                 }
-                
-                
 
             }
         }
@@ -158,9 +171,50 @@ namespace Boa_Sim
             //sceneCanv.Children.Add(newpath);
             
             this.drawNode = true;
-            this.pressedNode = ActiveNodeType.ANDREDUCE;
+            this.pressedNode = NodeType.ANDREDUCE;
             
 
         }
+
+        private void clickonPort(object sender, MouseEventArgs e)
+        {
+            
+            Path portpath = sender as Path;
+            string[] Portidentifiers = portpath.Uid.Split(" ");
+
+
+            NodeUI toconnectnode = this.scenenodes[Convert.ToInt32(Portidentifiers[0])]; // UID is divided as scene NOde list index;  
+
+            if (this.drawWire == true && drawing == true)
+            {
+                toconnectnode.ConnectWire(this.sceneWire, )
+
+
+
+                
+            }
+            else
+            {
+                this.drawWire = true;
+            }
+
+            
+
+            
+            
+            
+
+
+            //some code for connecting wire to the port first thing is to find the node to which this port belongs.
+
+
+
+
+               
+          
+                
+            
+        }
+
     }
 }

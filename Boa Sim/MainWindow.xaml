@@ -58,10 +58,10 @@
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Label Content="Console Log:" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Column="0" VerticalAlignment="Center" RenderTransformOrigin="-0.4,0.6" Width="84" MouseDown="consolemouse"/>
+            <Label Content="Console Log:" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Column="0" VerticalAlignment="Center" RenderTransformOrigin="-0.4,0.6" Width="84"/>
             <Border BorderBrush="Black" BorderThickness="2" Grid.Column="1">
                 <TextBox x:Name="Consoletb" VerticalScrollBarVisibility="Visible" 
-                         AcceptsReturn="True" TextWrapping="Wrap" MouseDown="consolemouse"></TextBox>
+                         AcceptsReturn="True" TextWrapping="Wrap" ></TextBox>
             </Border>
         </Grid>
 

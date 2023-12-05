@@ -34,19 +34,20 @@ public struct WireHelper
 
 namespace Boa_Sim.VisualNode
 {
-    internal class WireUI
+    class WireUI
     {
-        WireNode basewire { get; set; }
-
-
+        public WireNode basewire { get; set; }
+        public List<WireHelper> helpers = new List<WireHelper>();
+        public int sceneListIndex { get; set; }
         public WireUI() 
         { 
             this.basewire = new WireNode();
+            this.helpers = new List<WireHelper>();
+             
+        // things to do 
+        //1. create a wire node and assign the value if necessary.
 
-            // things to do 
-            //1. create a wire node and assign the value if necessary.
-
-        }
+    }
 
         public WireHelper drawWire(Canvas mainscene, WireHelper oldwires,Point startPoint, MouseEventArgs e  )
         {
@@ -145,7 +146,7 @@ namespace Boa_Sim.VisualNode
 
             
             //tempwires = new WireHelper(wireline1, wireline2, LineType.HORIZONTAL);
-            
+            this.helpers.Add(tempwires);
             mainscene.Children.Add(wireline1);
             mainscene.Children.Add(wireline2);
             // this.incompletewire = true;

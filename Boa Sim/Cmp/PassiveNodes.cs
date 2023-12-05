@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -14,33 +15,12 @@ namespace Boa_Sim.Cmp
         public static int GlobalId { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
-        public string BitVale { get; set; }
-        public int BusWidth { get; set; }
-        public int maxInput = 1;
-        public Point anchorPoint {get; set; }  
-       
-        
-       // public virtual Port[] Connections { get; set; }
-        public  Port[] Connections
-        {
-            get
-            {
-                return Connections;
-            }
-            set
-            {
-                if (!CheckMaxInput(Connections))
-                {
-                    errorList.Append("Too many signal driving the Node");
-                }
-                Connections = Connections;
-            }
 
-        }
-
+    
+        public string State { get; set; }
 
         public string[] errorList;
-        
+
         public bool signalValid;
 
         public bool InputEqual(Port[] portList)
@@ -59,122 +39,115 @@ namespace Boa_Sim.Cmp
             return true;
         }
 
-        public bool CheckMaxInput(Port[] conList)
-        {
-            int count = 0;
-            foreach (Port p in conList)
-            {
 
-                if (p.inout == IO.INPUT)
+
+
+    }
+
+
+    public class WireNode : Nodes
+    {
+        public NodeType ComponentType { get; }
+        public List<Port> InputPorts;
+        public List<Port> OutputPorts;
+        public string wireValue;
+        public int Buswidth;
+        public int Inputs { get; set; }
+        public int Outputs { get; set; }
+        public int WireListIndex { get; set; }
+
+        public WireNode(int stackindex)
+        {
+            this.ComponentType = NodeType.WIRE;
+
+            Nodes.GlobalId++;
+            this.Id = Nodes.GlobalId;
+            this.Name = "Constant" + Nodes.GlobalId;
+            this.Inputs = 0;
+            this.Outputs = 0;
+            this.InputPorts = new List<Port>();
+            this.OutputPorts = new List<Port>();
+            this.WireListIndex = stackindex;
+            this.errorList = new string[0] { };
+        }
+
+        public void ConnectNode(Port newconnectionPort, int nodestackindex)
+        {
+            Port newport = new Port();
+            if (newconnectionPort.inout == IO.OUTPUT)
+            {
+                newport.inout = IO.INPUT;
+                newport.ConnectionID = nodestackindex;
+                newport.Buswidth = newconnectionPort.Buswidth;
+                this.Inputs++;
+                newport.portId = this.Inputs;
+                newport.BitValue = newconnectionPort.BitValue;
+            }
+            else if (newconnectionPort.inout == IO.INPUT)
+            {
+                newport.inout = IO.OUTPUT;
+                newport.ConnectionID = nodestackindex;
+                this.Outputs++;
+                newport.portId = this.Outputs;
+                newport.BitValue = this.wireValue;
+                newport.Buswidth = this.Buswidth;
+
+            }
+            this.checkValidity();
+
+        }
+
+        public void DisconnectNode(Port oldconnectionPort)
+        {
+
+
+            if (oldconnectionPort.inout == IO.OUTPUT)
+            {
+                foreach (Port iport in this.InputPorts)
                 {
-                    count++;
-                    if (count > maxInput)
+                    if (iport.ConnectionID == oldconnectionPort.ParentID)
                     {
-                        return false;
+
+                        this.InputPorts.Remove(iport);
                     }
-                    this.BitVale = p.BitValue;
                 }
             }
-            return true;
-
-
-        }
-
-
-    }
-
-
-    public class WireNode: Nodes
-    {
-        public PassiveNodeType NodeType = PassiveNodeType.WIRE;
-        
-        
- 
-
-        public WireNode()
-        {
-            Nodes.GlobalId++;
-            this.Id = Nodes.GlobalId;
-            this.Name = "Constant" + Nodes.GlobalId;
-            this.errorList = new string[0] { };
-        }
-
-        public void Action()
-        {
-            if (errorList.Length == 0)
+            else if (oldconnectionPort.inout == IO.INPUT)
             {
-                signalValid = true;
+                foreach (Port iport in this.OutputPorts)
+                {
+                    if (iport.ConnectionID == oldconnectionPort.ParentID)
+                    {
 
+                        this.OutputPorts.Remove(iport);
+                    }
+                }
             }
-            else {
-                signalValid = false;
+            this.checkValidity();
+        }
+
+
+        //is called by each method before completion 
+
+        public void checkValidity()
+        {
+            string bitvalue = InputPorts[0].BitValue;
+            // for each section different types of validities are checked.
+            if (InputPorts.Count > 1)
+            {
+                this.errorList.Append("Too many inputs to Wire");
             }
-        }
 
-
-        
-
-    }
-
-
-    public class Constant : Nodes
-    {
-
-
-
-        public PassiveNodeType NodeType = PassiveNodeType.CONSTANT;
-        Constant()
-        {
-            Nodes.GlobalId++;
-            this.Id = Nodes.GlobalId;
-            this.Name = "Constant" + Nodes.GlobalId;
-            this.maxInput = 0;
-            this.errorList = new string[0] { };
-
-        }
-        public void Action()
-        {
+            foreach (Port iport in this.OutputPorts)
+            {
+                if (iport.BitValue != bitvalue)
+                {
+                    this.errorList.Append("Bitwidth mismatch");
+                }
+            }
 
         }
 
 
     }
-
-
-    public class Probe: Nodes
-    {
-        public PassiveNodeType NodeType = PassiveNodeType.PROBE;
-        Probe(int Id, string Name)
-        {
-            Nodes.GlobalId++;
-            this.Id = Nodes.GlobalId;
-            this.Name = "Constant" + Nodes.GlobalId;
-            this.errorList = new string[0] { };
-
-        }
-
-        public void Action()
-        {
-
-        }
-
-    }
-
-
-
-    public class Splitter: Nodes
-    {
-        public PassiveNodeType NodeType = PassiveNodeType.SPLITTER;
-        public List<WireNode> SplitterOut { get; set; }
-        public List<WireNode> SplitterIn { get; set; }
-
-        Splitter(int id, string Name)
-        {
-            this.Id = id;
-            this.Name = Name;
-            this.errorList = new string[0] { };
-        }
-
-    }
-
 }

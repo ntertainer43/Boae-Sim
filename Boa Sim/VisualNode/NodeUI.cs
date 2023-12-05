@@ -30,18 +30,19 @@ namespace Boa_Sim.VisualNode
     }
 
 
-    internal class NodeUI
+    class NodeUI
     {
-       public Nodes basenode { get; set; }
-        public NodeUI(ActiveNodeType nodeType ) 
+        public Nodes basenode { get; set; }
+        public NodeHelper helper { get; set; }
+        public int sceneListIndex { get; set; }
+
+        public NodeUI(NodeType nodeType ) 
         { 
-        
+        this.helper = new NodeHelper();
+            
         
         }
 
-        public NodeUI(PassiveNodeType nodeType ) 
-        {
-        }
 
         public NodeHelper DrawNode(Canvas mainscene, NodeHelper oldnodes, Point startPoint, MouseEventArgs e)
         {
@@ -89,6 +90,7 @@ namespace Boa_Sim.VisualNode
                 iportPath.Stroke = Brushes.Black;
                 iportPath.StrokeThickness = 2; iportPath.Data = iportgeo;
                 iportPath.Data = iportgeo;
+                iportPath.Uid = ""; // Encode a way to send the NodeUI as well as the inputoutput port and port no.
                 inportList.Add(iportPath);
                 mainscene.Children.Add(iportPath);
             }
@@ -132,19 +134,27 @@ namespace Boa_Sim.VisualNode
             tempnode.OutPorts = outportList;
             tempnode.InPorts = inportList;
 
+            this.helper = tempnode;
             return tempnode;
         }
 
-        public void ConnectWire(WireNode wireconnect, Port connectionPort)
+
+        public void ConnectWire(WireNode wireconnect, int portindex, string inout) 
         {
             Port tempport = new Port();
-            if (connectionPort.inout == IO.INPUT)
+            if (inout == "in")
             {
-                tempport.BitValue = wireconnect.BitVale;
-                tempport.ConnectionID = wireconnect.Id;
-
+                //tempport.BitValue = wireconnect.BitVale;
+                //tempport.ConnectionID = wireconnect.Id;
 
             }
+            else 
+            { 
+
+            }
+
+
+          
         }
 
 
@@ -251,4 +261,7 @@ namespace Boa_Sim.VisualNode
 
         
     }
+
+
+  
 }

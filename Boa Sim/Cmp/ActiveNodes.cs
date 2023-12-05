@@ -9,17 +9,14 @@ using System.Threading.Tasks;
 namespace Boa_Sim.Cmp
 {
 
-    public enum ActiveNodeType
+    public enum NodeType
     {
         ANDREDUCE, ORREDUCE, COMPERATOR, ADDER, MULTPLIER, DIV, MUX, DEMUX, DECODE,
         REGISTER, FLIPFLOP, NOTGATE, NORREDUCE, NANDREDUCE, XORREDUCE, BUFFER, NULL, BITSELECTOR,
-        SHIFTER,SHIFTREGISTER,BITWISEAND, BITWISEOR, BITWISEXOR,BITWISENAND, BITWISENOR
+        SHIFTER,SHIFTREGISTER,BITWISEAND, BITWISEOR, BITWISEXOR,BITWISENAND, BITWISENOR, WIRE, PROBE, CONSTANT, SPLITTER, PIN
     }
 
-    public enum PassiveNodeType
-    {
-        WIRE, PROBE, CONSTANT, SPLITTER, NULL, PIN
-    }
+
 
     public enum IO
     {
@@ -33,42 +30,36 @@ namespace Boa_Sim.Cmp
         public int ConnectionID;
         public IO inout;
         public string BitValue;
-        public bool isActiveNode;
+        public bool connected;
+        public int ParentID;
       
     }
 
 
-
-    public class ActiveNodes: Nodes
+    public class Act
     {
-        public virtual Port[] InputPorts { get; set; }
-        public virtual Port[] OutputPorts{ get; set;}
-
+        public Act()
+        {
+            Nodes newnode = new Nodes();
+            
+        }
     }
 
 
-    public class AndGate : ActiveNodes
+
+    public class AndGate : Nodes
     {
-        public ActiveNodeType Nodetype = ActiveNodeType.ANDREDUCE;
-        public override Port[] InputPorts { get; set; }
-        //{
-        //    get
-        //    {
-        //        return InputPorts;
-        //    }
-        //    set
-        //    {
-        //        if (!InputEqual(InputPorts))
-        //        {
-        //            this.errorList.Append("Input Ports Mismatch");
-        //        }
-        //        InputPorts = InputPorts;
+        public NodeType Nodetype = NodeType.ANDREDUCE;
 
-        //    }
-        //}
         bool bitwise;
+        public List<Port> InputPorts;
+        public List<Port> OutputPorts;
+        public int Outputs { get; }
+        public int Inputs {
+            get {  return this.Inputs; } 
+            set{
 
-
+            }       
  
 
         public AndGate(bool bitwise = false)
@@ -76,14 +67,10 @@ namespace Boa_Sim.Cmp
             
             Nodes.GlobalId++;
             this.Id = Nodes.GlobalId;
-            this.Name = Name;
+            this.Name = "And" + this.Id;
             this.InputPorts = [new Port(), new Port()];
             this.OutputPorts = [new Port()];
-            //this.InputPorts = [new Port() { Buswidth = 1, ConnectionID = 0 },
-            //    new Port() { Buswidth = 1, ConnectionID = 0 }];
-            //this.OutputPorts = [new Port() { Buswidth = 1, ConnectionID = 0 }];
-            this.bitwise = bitwise;
-           
+  
             
         }
 
@@ -91,8 +78,6 @@ namespace Boa_Sim.Cmp
         {
             // this part is called during every tick cycle or when manual action command is pressed.
             
-
-
         }
             
         
@@ -100,5 +85,10 @@ namespace Boa_Sim.Cmp
 
 
     }
+
+
+
+
+
 
 }
